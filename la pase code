@@ -1,0 +1,54 @@
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+
+using namespace std;
+namespace fs = std::filesystem;
+
+int main() {
+    // Creazione di una directory
+    string nomeDirectory = "MiaDirectory";
+    if (fs::create_directory(nomeDirectory)) {
+        cout << "Directory creata con successo." << endl;
+    } else {
+        cout << "Errore durante la creazione della directory." << endl;
+        return 1;
+    }
+
+    // Creazione di un percorso completo al file
+    string nomeFile = nomeDirectory + "/MioFile.txt";
+    fs::path percorsoFile = fs::absolute(nomeFile);
+
+    // Creazione e scrittura di un file
+    ofstream mioFile(percorsoFile);
+    mioFile << "Contenuto del mio file." << endl;
+    mioFile.close();
+
+    cout << "File creato e scritto con successo." << endl;
+
+    // Lettura del file
+    ifstream fileInLettura(percorsoFile);
+    if (fileInLettura.is_open()) {
+        string linea;
+        cout << "Contenuto del file:" << endl;
+        while (getline(fileInLettura, linea)) {
+            cout << linea << endl;
+        }
+        fileInLettura.close();
+    } else {
+        cout << "Errore durante la lettura del file." << endl;
+        return 1;
+    }
+
+    // Rinomina del file
+    string nuovoNomeFile = nomeDirectory + "/MioFileRinominato.txt";
+    fs::rename(percorsoFile, nuovoNomeFile);
+
+    cout << "File rinominato con successo." << endl;
+
+    // Eliminazione della directory e del suo contenuto
+    fs::remove_all(nomeDirectory);
+    cout << "Directory eliminata con successo." << endl;
+
+    return 0;
+}
